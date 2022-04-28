@@ -29,7 +29,7 @@ y_to = 0
 multi = 32 # const - look: base_link
 # forstep - on every zoom, neighboring tiles skip this much X,Y - used so no empty tile download links are generated in generate_tile_list()
 
-zooms = [           # zoom	b/px	b/tile	prefix	forstep
+zooms = [           # zoom	b/px	b/tile	prefix	forstep (this depends on the server, i've seen it's different sometimes)
 (64, 'zzzzzz_'  ),  #   0	16		2048	zzzzzz_	64
 (32, 'zzzzz_'   ),  #   1	8		1024	zzzzz_	32
 (16, 'zzzz_'    ),  #   2	4		512		zzzz_	16
