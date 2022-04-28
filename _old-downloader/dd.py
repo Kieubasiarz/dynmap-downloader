@@ -200,3 +200,6 @@ def main():
   generate_magick_command(x_from,x_to,y_from,y_to,zoom)
   
   print('Exiting main()...')
+
+if __name__ == '__main__':
+  main()
