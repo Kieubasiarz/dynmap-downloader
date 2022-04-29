@@ -1,7 +1,8 @@
 # legacy code i (kieu) used to download dynmaps on different ocasions. a trashy hack
-# run cmd and do "dd.py <folder name> <zoom>" - if it times out just retry - rarely it will download empty tiles that are 143 bytes or skip (this can be seen by glitches in an ImageMagick render)
-# yes, download area and dynmap url is to be hardcoded every time
-# you need "pip install requests"
+# comments mostly written in autistic, i don't provide translations sorry :D
+# run cmd and do "dd.py <subfolder name> <zoom>" - if it times out just retry - very rarely it will download empty tiles that are 143 bytes or skip (this can be seen by glitches in an ImageMagick render)
+# yes, download area and dynmap url is to be hardcoded every time, i'm not adding an input thing or config to this atm
+# you need pip install requests and Pillow
 
 import os
 import requests
@@ -21,10 +22,10 @@ dl_full_path = os.path.join(os.getcwd(), dl_folder, str(zoom))
 # NW = lowest X, highest Y
 # SE = highest X, lowest Y
 
-x_from = 0
-x_to = 0
-y_from = 0
-y_to = 0
+x_from = -1
+x_to   = 1
+y_from = -1
+y_to   = 1
 
 multi = 32 # const - look: base_link
 # forstep - on every zoom, neighboring tiles skip this much X,Y - used so no empty tile download links are generated in generate_tile_list()
