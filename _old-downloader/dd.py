@@ -80,31 +80,36 @@ def download_tile(tile): # downloads a given tile at given zoom
 
     if not os.path.isfile(filepath): # if file doesn't exist, download
       download_link = base_link + '{0}_{1}/{2}{3}_{4}.png'.format(x//multi, y//multi, zooms[zoom][1], x, y)
-      print(download_link)
+      #print(download_link)
       
       c = 0
       while c >= 0:
         
         if c >= 10:
-          print('Download failed for ' + filepath)
+          print('Keeping uncertain ' + filepath)
           break
         
         tile_download = requests.get(download_link, timeout=120000)
         open(filepath, 'wb').write(tile_download.content)
         if not os.path.isfile(filepath):
           c += 1
-          print('File missing, retry attempt ' + str(c))
-        elif os.stat(filepath).st_size == 143:
-          #os.remove(filepath)
+          print(filepath + ' missing, retry attempt ' + str(c))
+        elif os.stat(filepath).st_size == 143: # if it fails enough times, the black tile will be left there. very low chance that it's glitched, it usually is just an actual black tile (possibly world border)
           c += 1
-          print('Error 143, retry attempt ' + str(c))
-          #print('Error 143, but keeping the file :D')
+          print(filepath + ' is 143 bytes (black), retry attempt ' + str(c))
         else:
           c = -1
+        
+        try:
+          img = Image.open(filepath) # open the image file
+          img.verify() # verify that it is, in fact an image
+        except (IOError, SyntaxError) as e:
+          print('Bad file: ' + filepath)
+          c += 1
 
 
 
-def generate_magick_command(x_from, x_to, y_from, y_to, zoom): # generates a command that compiles all tiles into a big .png, run from the folder with tiles - needs ImageMagick added to PATH or in the same folder - .bat will freeze if out of memory
+def generate_magick_command(x_from, x_to, y_from, y_to, zoom): # generates a command that compiles all tiles into a big .png, run from the folder with tiles - needs ImageMagick added to PATH or in the same folder - .bat will freeze if out of memory from a huge file being generated
 
   if os.path.isfile(os.path.join(dl_full_path, 'generated-command.bat')):
     os.remove(os.path.join(dl_full_path, 'generated-command.bat'))
@@ -155,6 +160,7 @@ def generate_magick_command(x_from, x_to, y_from, y_to, zoom): # generates a com
   print('Command should be generated, check your files.')
 
 
+
 def main():
   print('Running main()...')
   
@@ -163,22 +169,18 @@ def main():
   full_tile_list = generate_tile_list(x_from,x_to,y_from,y_to,zoom)
   print('Got full_tile_list containing ' + str(len(full_tile_list)) + ' items at zoom level ' + str(zoom))
   
-  
-  # print exaple tile coords
   print('Printing example items...')
-  #print(full_tile_list)
-  #for e in range(1000): print(full_tile_list[e])
-  print(full_tile_list[0])
-  print(full_tile_list[1])
-  print(full_tile_list[2])
-  print(full_tile_list[3])
-  print(full_tile_list[len(full_tile_list)//3])
-  print(full_tile_list[len(full_tile_list)//2])
-  print(full_tile_list[-len(full_tile_list)//3])
-  print(full_tile_list[-4])
-  print(full_tile_list[-3])
-  print(full_tile_list[-2])
-  print(full_tile_list[-1])
+  print("#0    " + str(full_tile_list[0]))
+  print("#1    " + str(full_tile_list[1]))
+  print("#2    " + str(full_tile_list[2]))
+  print("#3    " + str(full_tile_list[3]))
+  print("#" + str(len(full_tile_list)//3) + "    " + str(full_tile_list[len(full_tile_list)//3]))
+  print("#" + str(len(full_tile_list)//2) + "    " + str(full_tile_list[len(full_tile_list)//2]))
+  print("#" + str(-len(full_tile_list)//3) + "    " + str(full_tile_list[-len(full_tile_list)//3]))
+  print("#-4    " + str(full_tile_list[-4]))
+  print("#-3    " + str(full_tile_list[-3]))
+  print("#-2    " + str(full_tile_list[-2]))
+  print("#-1    " + str(full_tile_list[-1]))
   print('Example print complete.')
   
   # create folders
